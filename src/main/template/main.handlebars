@@ -1,15 +1,18 @@
-<div class='info' id='api_info'>
+<div id='api_info'>
   {{#if info}}
-    <div class="info_title">{{info.title}}</div>
-    <div class="info_description">{{{info.description}}}</div>
-    {{#if info.termsOfServiceUrl}}<div class="info_tos"><a href="{{info.termsOfServiceUrl}}">Terms of service</a></div>{{/if}}
-    {{#if info.contact}}<div class='info_contact'><a href="mailto:{{info.contact}}">Contact the developer</a></div>{{/if}}
-    {{#if info.license}}<div class='info_license'><a href='{{info.licenseUrl}}'>{{info.license}}</a></div>{{/if}}
+    <div class="jumbotron">
+      <h1>{{info.title}}</h1>
+      <p>{{{info.description}}}</p>
+      <ul class="list-inline">
+      {{#if info.termsOfServiceUrl}}<li class="info_tos"><a href="{{info.termsOfServiceUrl}}">Terms of service</a></li>{{/if}}
+      {{#if info.contact}}<li class='info_contact'><a href="mailto:{{info.contact}}">Contact the developer</a></li>{{/if}}
+      {{#if info.license}}<li class='info_license'><a href='{{info.licenseUrl}}'>{{info.license}}</a></li>{{/if}}
+      </ul>
+    </div>
   {{/if}}
 </div>
-<div class='container' id='resources_container'>
-    <ul id='resources'>
-    </ul>
+<div class='swagger-container' id='resources_container'>
+    <ul id='resources' class="list-group"></ul>
 
     <div class="footer">
         <br>

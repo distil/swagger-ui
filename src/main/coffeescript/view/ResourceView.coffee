@@ -19,7 +19,7 @@ class ResourceView extends Backbone.View
 
       operation.nickname = id
       operation.parentId = @model.id
-      @addOperation operation 
+      @addOperation operation
     @
 
   addOperation: (operation) ->

@@ -10,9 +10,9 @@ class MainView extends Backbone.View
       sorter = sorters[sorterName]
       for route in @model.apisArray
         route.operationsArray.sort sorter
-      if (sorterName == "alpha") # sort top level paths if alpha 
+      if (sorterName == "alpha") # sort top level paths if alpha
         @model.apisArray.sort sorter
- 
+
   render: ->
     # Render the outer container for resources
     $(@el).html(Handlebars.templates.main(@model))
@@ -33,7 +33,7 @@ class MainView extends Backbone.View
 
   addResource: (resource) ->
     # Render a resource and add it to resources li
-    resourceView = new ResourceView({model: resource, tagName: 'li', id: 'resource_' + resource.id, className: 'resource', swaggerOptions: @options.swaggerOptions})
+    resourceView = new ResourceView({model: resource, tagName: 'li', id: 'resource_' + resource.id, className: 'list-group-item resource', swaggerOptions: @options.swaggerOptions})
     $('#resources').append resourceView.render().el
 
   clear: ->
