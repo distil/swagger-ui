@@ -51,6 +51,7 @@ function _dist() {
     gulp.src([
         './node_modules/es5-shim/es5-shim.js',
         './lib/sanitize-html.min.js',
+        './node_modules/awesomplete/awesomplete.js',
         './src/main/javascript/**/*.js',
         './node_modules/swagger-client/browser/swagger-client.js'
       ]),
@@ -82,7 +83,9 @@ function _less() {
       './src/main/less/screen.less',
       './src/main/less/print.less',
       './src/main/less/reset.less',
-      './src/main/less/style.less'
+      './src/main/less/style.less',
+      './node_modules/awesomplete/awesomplete.css',
+      './src/main/less/distil.less'
     ])
     .pipe(less())
     .on('error', function(err){ log(err); this.emit('end');})

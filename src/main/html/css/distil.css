@@ -1,0 +1,9 @@
+.distil-logo {
+  min-width: 121px;
+  text-indent: -9999px;
+  background: transparent url(../images/distil-logo.png) no-repeat left center;
+}
+.api-search-parameter {
+  margin-left: 5px;
+  min-width: 500px;
+}

@@ -54,15 +54,7 @@ SwaggerUi.Views.MainView = Backbone.View.extend({
       });
     }
 
-    if ('validatorUrl' in opts.swaggerOptions) {
-      // Validator URL specified explicitly
-      this.model.validatorUrl = opts.swaggerOptions.validatorUrl;
-    } else if (this.model.url.indexOf('localhost') > 0 || this.model.url.indexOf('127.0.0.1') > 0) {
-      // Localhost override
-      this.model.validatorUrl = null;
-    } else {
-      this.model.validatorUrl = '//online.swagger.io/validator';
-    }
+    this.model.validatorUrl = null;
 
     // JSonEditor requires type='object' to be present on defined types, we add it if it's missing
     // is there any valid case were it should not be added ?

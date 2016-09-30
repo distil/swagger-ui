@@ -7,6 +7,9 @@
 (function(){/* jshint ignore:start */ 
  {(function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['api_search'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div class=\"navbar-form navbar-left api-search-form\" role=\"search\">\n  <div class=\"form-group\">\n    <label for=\"api-search\">Search:\n      <input type=\"text\" class=\"form-control api-search-parameter\"\n             placeholder=\"API\" id=\"api-search\" name=\"api-search\">\n    </label>\n  </div>\n</div>\n";
+},"useData":true});
 templates['apikey_auth'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -209,7 +212,7 @@ templates['main'] = template({"1":function(container,depth0,helpers,partials,dat
 
   return "<div class='info' id='api_info'>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.info : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "</div>\n<div class='container' id='resources_container'>\n  <div class='authorize-wrapper'></div>\n\n  <ul id='resources'></ul>\n\n  <div class=\"footer\">\n    <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: "
+    + "</div>\n<div class='resources-container' id='resources_container'>\n  <div class='authorize-wrapper'></div>\n\n  <ul id='resources'></ul>\n\n  <div class=\"footer\">\n    <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: "
     + ((stack1 = (helpers.escape || (depth0 && depth0.escape) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.basePath : depth0),{"name":"escape","hash":{},"data":data})) != null ? stack1 : "")
     + "\n"
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.info : depth0)) != null ? stack1.version : stack1),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -772,6 +775,450 @@ templates['status_code'] = template({"1":function(container,depth0,helpers,parti
 },"useData":true});
 })();} 
  /* jshint ignore:end */
+/**
+ * Simple, lightweight, usable local autocomplete library for modern browsers
+ * Because there weren’t enough autocomplete scripts in the world? Because I’m completely insane and have NIH syndrome? Probably both. :P
+ * @author Lea Verou http://leaverou.github.io/awesomplete
+ * MIT license
+ */
+
+(function () {
+
+var _ = function (input, o) {
+	var me = this;
+
+	// Setup
+
+	this.input = $(input);
+	this.input.setAttribute("autocomplete", "off");
+	this.input.setAttribute("aria-autocomplete", "list");
+
+	o = o || {};
+
+	configure(this, {
+		minChars: 2,
+		maxItems: 10,
+		autoFirst: false,
+		data: _.DATA,
+		filter: _.FILTER_CONTAINS,
+		sort: _.SORT_BYLENGTH,
+		item: _.ITEM,
+		replace: _.REPLACE
+	}, o);
+
+	this.index = -1;
+
+	// Create necessary elements
+
+	this.container = $.create("div", {
+		className: "awesomplete",
+		around: input
+	});
+
+	this.ul = $.create("ul", {
+		hidden: "hidden",
+		inside: this.container
+	});
+
+	this.status = $.create("span", {
+		className: "visually-hidden",
+		role: "status",
+		"aria-live": "assertive",
+		"aria-relevant": "additions",
+		inside: this.container
+	});
+
+	// Bind events
+
+	$.bind(this.input, {
+		"input": this.evaluate.bind(this),
+		"blur": this.close.bind(this, { reason: "blur" }),
+		"keydown": function(evt) {
+			var c = evt.keyCode;
+
+			// If the dropdown `ul` is in view, then act on keydown for the following keys:
+			// Enter / Esc / Up / Down
+			if(me.opened) {
+				if (c === 13 && me.selected) { // Enter
+					evt.preventDefault();
+					me.select();
+				}
+				else if (c === 27) { // Esc
+					me.close({ reason: "esc" });
+				}
+				else if (c === 38 || c === 40) { // Down/Up arrow
+					evt.preventDefault();
+					me[c === 38? "previous" : "next"]();
+				}
+			}
+		}
+	});
+
+	$.bind(this.input.form, {"submit": this.close.bind(this, { reason: "submit" })});
+
+	$.bind(this.ul, {"mousedown": function(evt) {
+		var li = evt.target;
+
+		if (li !== this) {
+
+			while (li && !/li/i.test(li.nodeName)) {
+				li = li.parentNode;
+			}
+
+			if (li && evt.button === 0) {  // Only select on left click
+				evt.preventDefault();
+				me.select(li, evt.target);
+			}
+		}
+	}});
+
+	if (this.input.hasAttribute("list")) {
+		this.list = "#" + this.input.getAttribute("list");
+		this.input.removeAttribute("list");
+	}
+	else {
+		this.list = this.input.getAttribute("data-list") || o.list || [];
+	}
+
+	_.all.push(this);
+};
+
+_.prototype = {
+	set list(list) {
+		if (Array.isArray(list)) {
+			this._list = list;
+		}
+		else if (typeof list === "string" && list.indexOf(",") > -1) {
+				this._list = list.split(/\s*,\s*/);
+		}
+		else { // Element or CSS selector
+			list = $(list);
+
+			if (list && list.children) {
+				var items = [];
+				slice.apply(list.children).forEach(function (el) {
+					if (!el.disabled) {
+						var text = el.textContent.trim();
+						var value = el.value || text;
+						var label = el.label || text;
+						if (value !== "") {
+							items.push({ label: label, value: value });
+						}
+					}
+				});
+				this._list = items;
+			}
+		}
+
+		if (document.activeElement === this.input) {
+			this.evaluate();
+		}
+	},
+
+	get selected() {
+		return this.index > -1;
+	},
+
+	get opened() {
+		return !this.ul.hasAttribute("hidden");
+	},
+
+	close: function (o) {
+		if (!this.opened) {
+			return;
+		}
+
+		this.ul.setAttribute("hidden", "");
+		this.index = -1;
+
+		$.fire(this.input, "awesomplete-close", o || {});
+	},
+
+	open: function () {
+		this.ul.removeAttribute("hidden");
+
+		if (this.autoFirst && this.index === -1) {
+			this.goto(0);
+		}
+
+		$.fire(this.input, "awesomplete-open");
+	},
+
+	next: function () {
+		var count = this.ul.children.length;
+
+		this.goto(this.index < count - 1? this.index + 1 : -1);
+	},
+
+	previous: function () {
+		var count = this.ul.children.length;
+
+		this.goto(this.selected? this.index - 1 : count - 1);
+	},
+
+	// Should not be used, highlights specific item without any checks!
+	goto: function (i) {
+		var lis = this.ul.children;
+
+		if (this.selected) {
+			lis[this.index].setAttribute("aria-selected", "false");
+		}
+
+		this.index = i;
+
+		if (i > -1 && lis.length > 0) {
+			lis[i].setAttribute("aria-selected", "true");
+			this.status.textContent = lis[i].textContent;
+
+			$.fire(this.input, "awesomplete-highlight", {
+				text: this.suggestions[this.index]
+			});
+		}
+	},
+
+	select: function (selected, origin) {
+		if (selected) {
+			this.index = $.siblingIndex(selected);
+		} else {
+			selected = this.ul.children[this.index];
+		}
+
+		if (selected) {
+			var suggestion = this.suggestions[this.index];
+
+			var allowed = $.fire(this.input, "awesomplete-select", {
+				text: suggestion,
+				origin: origin || selected
+			});
+
+			if (allowed) {
+				this.replace(suggestion);
+				this.close({ reason: "select" });
+				$.fire(this.input, "awesomplete-selectcomplete", {
+					text: suggestion
+				});
+			}
+		}
+	},
+
+	evaluate: function() {
+		var me = this;
+		var value = this.input.value;
+
+		if (value.length >= this.minChars && this._list.length > 0) {
+			this.index = -1;
+			// Populate list with options that match
+			this.ul.innerHTML = "";
+
+			this.suggestions = this._list
+				.map(function(item) {
+					return new Suggestion(me.data(item, value));
+				})
+				.filter(function(item) {
+					return me.filter(item, value);
+				})
+				.sort(this.sort)
+				.slice(0, this.maxItems);
+
+			this.suggestions.forEach(function(text) {
+					me.ul.appendChild(me.item(text, value));
+				});
+
+			if (this.ul.children.length === 0) {
+				this.close({ reason: "nomatches" });
+			} else {
+				this.open();
+			}
+		}
+		else {
+			this.close({ reason: "nomatches" });
+		}
+	}
+};
+
+// Static methods/properties
+
+_.all = [];
+
+_.FILTER_CONTAINS = function (text, input) {
+	return RegExp($.regExpEscape(input.trim()), "i").test(text);
+};
+
+_.FILTER_STARTSWITH = function (text, input) {
+	return RegExp("^" + $.regExpEscape(input.trim()), "i").test(text);
+};
+
+_.SORT_BYLENGTH = function (a, b) {
+	if (a.length !== b.length) {
+		return a.length - b.length;
+	}
+
+	return a < b? -1 : 1;
+};
+
+_.ITEM = function (text, input) {
+	var html = input === '' ? text : text.replace(RegExp($.regExpEscape(input.trim()), "gi"), "<mark>$&</mark>");
+	return $.create("li", {
+		innerHTML: html,
+		"aria-selected": "false"
+	});
+};
+
+_.REPLACE = function (text) {
+	this.input.value = text.value;
+};
+
+_.DATA = function (item/*, input*/) { return item; };
+
+// Private functions
+
+function Suggestion(data) {
+	var o = Array.isArray(data)
+	  ? { label: data[0], value: data[1] }
+	  : typeof data === "object" && "label" in data && "value" in data ? data : { label: data, value: data };
+
+	this.label = o.label || o.value;
+	this.value = o.value;
+}
+Object.defineProperty(Suggestion.prototype = Object.create(String.prototype), "length", {
+	get: function() { return this.label.length; }
+});
+Suggestion.prototype.toString = Suggestion.prototype.valueOf = function () {
+	return "" + this.label;
+};
+
+function configure(instance, properties, o) {
+	for (var i in properties) {
+		var initial = properties[i],
+		    attrValue = instance.input.getAttribute("data-" + i.toLowerCase());
+
+		if (typeof initial === "number") {
+			instance[i] = parseInt(attrValue);
+		}
+		else if (initial === false) { // Boolean options must be false by default anyway
+			instance[i] = attrValue !== null;
+		}
+		else if (initial instanceof Function) {
+			instance[i] = null;
+		}
+		else {
+			instance[i] = attrValue;
+		}
+
+		if (!instance[i] && instance[i] !== 0) {
+			instance[i] = (i in o)? o[i] : initial;
+		}
+	}
+}
+
+// Helpers
+
+var slice = Array.prototype.slice;
+
+function $(expr, con) {
+	return typeof expr === "string"? (con || document).querySelector(expr) : expr || null;
+}
+
+function $$(expr, con) {
+	return slice.call((con || document).querySelectorAll(expr));
+}
+
+$.create = function(tag, o) {
+	var element = document.createElement(tag);
+
+	for (var i in o) {
+		var val = o[i];
+
+		if (i === "inside") {
+			$(val).appendChild(element);
+		}
+		else if (i === "around") {
+			var ref = $(val);
+			ref.parentNode.insertBefore(element, ref);
+			element.appendChild(ref);
+		}
+		else if (i in element) {
+			element[i] = val;
+		}
+		else {
+			element.setAttribute(i, val);
+		}
+	}
+
+	return element;
+};
+
+$.bind = function(element, o) {
+	if (element) {
+		for (var event in o) {
+			var callback = o[event];
+
+			event.split(/\s+/).forEach(function (event) {
+				element.addEventListener(event, callback);
+			});
+		}
+	}
+};
+
+$.fire = function(target, type, properties) {
+	var evt = document.createEvent("HTMLEvents");
+
+	evt.initEvent(type, true, true );
+
+	for (var j in properties) {
+		evt[j] = properties[j];
+	}
+
+	return target.dispatchEvent(evt);
+};
+
+$.regExpEscape = function (s) {
+	return s.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&");
+};
+
+$.siblingIndex = function (el) {
+	/* eslint-disable no-cond-assign */
+	for (var i = 0; el = el.previousElementSibling; i++);
+	return i;
+};
+
+// Initialization
+
+function init() {
+	$$("input.awesomplete").forEach(function (input) {
+		new _(input);
+	});
+}
+
+// Are we in a browser? Check for Document constructor
+if (typeof Document !== "undefined") {
+	// DOM already loaded?
+	if (document.readyState !== "loading") {
+		init();
+	}
+	else {
+		// Wait for it
+		document.addEventListener("DOMContentLoaded", init);
+	}
+}
+
+_.$ = $;
+_.$$ = $$;
+
+// Make sure to export Awesomplete on self when in a browser
+if (typeof self !== "undefined") {
+	self.Awesomplete = _;
+}
+
+// Expose Awesomplete as a CJS module
+if (typeof module === "object" && module.exports) {
+	module.exports = _;
+}
+
+return _;
+
+}());
+
 'use strict';
 
 
@@ -21564,11 +22011,13 @@ Emitter.prototype.hasListeners = function(event){
 window.SwaggerUi = Backbone.Router.extend({
 
   dom_id: 'swagger_ui',
+  api_search_id: '#swagger-ui-api-search',
 
   // Attributes
   options: null,
   api: null,
   headerView: null,
+  apiSearchView: null,
   mainView: null,
 
   // SwaggerUi accepts all the same options as SwaggerApi
@@ -21702,6 +22151,12 @@ window.SwaggerUi = Backbone.Router.extend({
     this.mainView = new SwaggerUi.Views.MainView({
       model: this.api,
       el: $('#' + this.dom_id),
+      swaggerOptions: this.options,
+      router: this
+    }).render();
+    this.apiSearchView = new SwaggerUi.Views.ApiSearchView({
+      model: this.api,
+      el: $(this.api_search_id),
       swaggerOptions: this.options,
       router: this
     }).render();
@@ -22012,6 +22467,97 @@ SwaggerUi.Views.ApiKeyAuthView = Backbone.View.extend({ // TODO: append this to 
     }
 
 });
+'use strict';
+
+SwaggerUi.Views.ApiSearchView = Backbone.View.extend({
+    ui: {
+        searchField: 'input#api-search'
+    },
+
+    events: {
+        'awesomplete-selectcomplete input#api-search': 'onApiSelectChange'
+    },
+
+    template: Handlebars.templates.api_search,
+
+    initialize: function (opts) {
+        this.options = opts || {};
+        this.router = opts.router;
+    },
+
+    getAwesomplete: function (element, list) {
+        return new Awesomplete(element, {
+            maxItems: 5,
+            minChars: 1,
+            list: list,
+            filter: function(text, input) {
+                var cleansedInput = Awesomplete.$.regExpEscape(input.trim());
+                cleansedInput = cleansedInput.replace(/\s/g, '[\\W\\s]*');
+                return RegExp(cleansedInput, 'i').test(text);
+            },
+            item: function (text, input) {
+                var html = '';
+                if (input === '') {
+                    html = text;
+                } else {
+                    var cleansedInput = Awesomplete.$.regExpEscape(input.trim());
+                    cleansedInput = cleansedInput.replace(/\s/g, '[\\W\\s]*');
+                    var regexp = RegExp(cleansedInput, 'gi');
+                    html = text.replace(regexp, '<mark>$&</mark>');
+                }
+                return Awesomplete.$.create('li', {
+                    innerHTML: html,
+                    'aria-selected': 'false'
+                });
+            }
+        });
+    },
+
+    buildApiList: function () {
+        var apiList = this.model.apisArray.map(function (api) {
+            return api.operationsArray.map(function (operation) {
+                return {
+                    label: api.tag + ': ' + operation.summary + ' - ' + operation.method + ' ' + operation.path,
+                    value: api.id + '|' + operation.nickname
+                };
+            });
+        });
+        return [].concat.apply([], apiList);
+    },
+
+    render: function () {
+        $(this.el).html(Handlebars.templates.api_search(this.model));
+
+        var apiList = this.buildApiList();
+        this.getAwesomplete(this.ui.searchField, apiList);
+        return this;
+    },
+
+    onApiSelectChange: function (event) {
+        var combinedId = event.target.value;
+        var delimiterIndex = combinedId.indexOf('|');
+        var resourceId = combinedId.slice(0, delimiterIndex);
+        var operationId = combinedId.slice(delimiterIndex + 1, combinedId.length);
+
+        // Expand selected resource
+        var resource = _.find(this.model.apisArray, {id: resourceId});
+        // Open requested operation
+        Docs.expandEndpointListForResource(resource.id);
+
+        // Expand selected operation
+        var operationSelector = $('#' + resourceId + '_' + operationId + '_content');
+        Docs.expandOperation(operationSelector);
+
+        operationSelector.promise().done(function () {
+            // Scroll to the opened DOM element
+            var operationHeaderId = resourceId + '_' + operationId;
+            document.getElementById(operationHeaderId).scrollIntoView();
+        });
+
+        event.target.value = '';
+    }
+});
+
 'use strict';
 
 SwaggerUi.Views.AuthButtonView = Backbone.View.extend({
@@ -22594,15 +23140,7 @@ SwaggerUi.Views.MainView = Backbone.View.extend({
       });
     }
 
-    if ('validatorUrl' in opts.swaggerOptions) {
-      // Validator URL specified explicitly
-      this.model.validatorUrl = opts.swaggerOptions.validatorUrl;
-    } else if (this.model.url.indexOf('localhost') > 0 || this.model.url.indexOf('127.0.0.1') > 0) {
-      // Localhost override
-      this.model.validatorUrl = null;
-    } else {
-      this.model.validatorUrl = '//online.swagger.io/validator';
-    }
+    this.model.validatorUrl = null;
 
     // JSonEditor requires type='object' to be present on defined types, we add it if it's missing
     // is there any valid case were it should not be added ?

@@ -4,11 +4,13 @@
 window.SwaggerUi = Backbone.Router.extend({
 
   dom_id: 'swagger_ui',
+  api_search_id: '#swagger-ui-api-search',
 
   // Attributes
   options: null,
   api: null,
   headerView: null,
+  apiSearchView: null,
   mainView: null,
 
   // SwaggerUi accepts all the same options as SwaggerApi
@@ -142,6 +144,12 @@ window.SwaggerUi = Backbone.Router.extend({
     this.mainView = new SwaggerUi.Views.MainView({
       model: this.api,
       el: $('#' + this.dom_id),
+      swaggerOptions: this.options,
+      router: this
+    }).render();
+    this.apiSearchView = new SwaggerUi.Views.ApiSearchView({
+      model: this.api,
+      el: $(this.api_search_id),
       swaggerOptions: this.options,
       router: this
     }).render();

@@ -27,6 +27,7 @@
   },
   "readmeFilename": "README.md",
   "devDependencies": {
+    "awesomplete": "~1.1.1",
     "chai": "^2.1.0",
     "cors": "^2.5.3",
     "docco": "^0.7.0",
