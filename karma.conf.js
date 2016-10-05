@@ -11,7 +11,8 @@ module.exports = function(config) {
     ],
 
     files: [
-      'dist/lib/jquery-1.8.0.min.js',
+      'dist/lib/jquery-1.12.4.min.js',
+      'dist/lib/jquery-migrate-1.4.1.min.js',
       'dist/lib/jquery.slideto.min.js',
       'dist/lib/jquery.wiggle.min.js',
       'dist/lib/jquery.ba-bbq.min.js',
