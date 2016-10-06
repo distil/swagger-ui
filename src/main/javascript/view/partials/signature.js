@@ -332,20 +332,6 @@ SwaggerUi.partials.signature = (function () {
         }
       }
 
-      if (_.isUndefined(schema.items)) {
-        if (_.isArray(schema.enum)) {
-          var enumString;
-
-          if (type === 'number' || type === 'integer') {
-            enumString = schema.enum.join(', ');
-          } else {
-            enumString = '"' + schema.enum.join('", "') + '"';
-          }
-
-          options += optionHtml('Enum', enumString);
-        }
-      }
-
       if (options.length > 0) {
         html = '<span class="propWrap">' + html + '<table class="optionsWrapper"><tr><th colspan="2">' + type + '</th></tr>' + options + '</table></span>';
       }
