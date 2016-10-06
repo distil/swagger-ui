@@ -23,7 +23,7 @@ SwaggerUi.Views.ApiSearchView = Backbone.View.extend({
             list: list,
             filter: function(text, input) {
                 var cleansedInput = Awesomplete.$.regExpEscape(input.trim());
-                cleansedInput = cleansedInput.replace(/\s/g, '[\\W\\s]*');
+                cleansedInput = cleansedInput.replace(/\s/g, '.*?');
                 return RegExp(cleansedInput, 'i').test(text);
             },
             item: function (text, input) {
@@ -32,7 +32,7 @@ SwaggerUi.Views.ApiSearchView = Backbone.View.extend({
                     html = text;
                 } else {
                     var cleansedInput = Awesomplete.$.regExpEscape(input.trim());
-                    cleansedInput = cleansedInput.replace(/\s/g, '[\\W\\s]*');
+                    cleansedInput = cleansedInput.replace(/\s/g, '.*?');
                     var regexp = RegExp(cleansedInput, 'gi');
                     html = text.replace(regexp, '<mark>$&</mark>');
                 }
