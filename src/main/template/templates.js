@@ -2,7 +2,7 @@
  {(function() {
   var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
 templates['api_search'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"navbar-form navbar-left api-search-form\" role=\"search\">\n  <div class=\"form-group\">\n    <label for=\"api-search\">Search:\n      <input type=\"text\" class=\"form-control api-search-parameter\"\n             placeholder=\"API\" id=\"api-search\" name=\"api-search\">\n    </label>\n  </div>\n</div>\n";
+    return "<div class=\"navbar-form navbar-left api-search-form\" role=\"search\">\n  <div class=\"form-group\">\n    <input type=\"text\" class=\"form-control api-search-parameter\"\n           placeholder=\"Search\" id=\"api-search\" name=\"api-search\">\n  </div>\n</div>\n";
 },"useData":true});
 templates['apikey_auth'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
