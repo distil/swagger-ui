@@ -192,7 +192,7 @@ templates['main'] = template({"1":function(container,depth0,helpers,partials,dat
 },"14":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "  , <span style=\"font-variant: small-caps\" data-sw-translate>api version</span>: "
+  return ",\n      <span style=\"font-variant: small-caps\" data-sw-translate>api version</span>: "
     + ((stack1 = (helpers.escape || (depth0 && depth0.escape) || helpers.helperMissing).call(depth0 != null ? depth0 : {},((stack1 = (depth0 != null ? depth0.info : depth0)) != null ? stack1.version : stack1),{"name":"escape","hash":{},"data":data})) != null ? stack1 : "")
     + "\n    ";
 },"16":function(container,depth0,helpers,partials,data) {
@@ -213,8 +213,7 @@ templates['main'] = template({"1":function(container,depth0,helpers,partials,dat
   return "<div class='info' id='api_info'>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.info : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "</div>\n<div class='resources-container' id='resources_container'>\n  <div class='authorize-wrapper'></div>\n\n  <ul id='resources'></ul>\n\n  <div class=\"footer\">\n    <h4 style=\"color: #999\">[ <span style=\"font-variant: small-caps\">base url</span>: "
-    + ((stack1 = (helpers.escape || (depth0 && depth0.escape) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.basePath : depth0),{"name":"escape","hash":{},"data":data})) != null ? stack1 : "")
-    + "\n"
+    + ((stack1 = (helpers.escape || (depth0 && depth0.escape) || helpers.helperMissing).call(alias1,(depth0 != null ? depth0.constructedUrl : depth0),{"name":"escape","hash":{},"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers["if"].call(alias1,((stack1 = (depth0 != null ? depth0.info : depth0)) != null ? stack1.version : stack1),{"name":"if","hash":{},"fn":container.program(14, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "]\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.validatorUrl : depth0),{"name":"if","hash":{},"fn":container.program(16, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
@@ -23155,6 +23154,12 @@ SwaggerUi.Views.MainView = Backbone.View.extend({
   },
 
   render: function () {
+    var constructedUrl = this.model.scheme + '://' + this.model.host;
+
+    if (this.basePath !== '/') {
+      constructedUrl += this.model.basePath;
+    }
+    this.model.constructedUrl = constructedUrl;
     $(this.el).html(Handlebars.templates.main(this.model));
     this.info = this.$('.info')[0];
 

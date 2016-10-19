@@ -68,6 +68,12 @@ SwaggerUi.Views.MainView = Backbone.View.extend({
   },
 
   render: function () {
+    var constructedUrl = this.model.scheme + '://' + this.model.host;
+
+    if (this.basePath !== '/') {
+      constructedUrl += this.model.basePath;
+    }
+    this.model.constructedUrl = constructedUrl;
     $(this.el).html(Handlebars.templates.main(this.model));
     this.info = this.$('.info')[0];
 

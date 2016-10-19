@@ -19,9 +19,8 @@
   <ul id='resources'></ul>
 
   <div class="footer">
-    <h4 style="color: #999">[ <span style="font-variant: small-caps">base url</span>: {{{escape basePath}}}
-    {{#if info.version}}
-  , <span style="font-variant: small-caps" data-sw-translate>api version</span>: {{{escape info.version}}}
+    <h4 style="color: #999">[ <span style="font-variant: small-caps">base url</span>: {{{escape constructedUrl}}}{{#if info.version}},
+      <span style="font-variant: small-caps" data-sw-translate>api version</span>: {{{escape info.version}}}
     {{/if}}]
     {{#if validatorUrl}}
     <span style="float:right"><a target="_blank" href="{{{escape validatorUrl}}}/debug?url={{{escape url}}}"><img id="validator" src="{{{escape validatorUrl}}}?url={{{escape url}}}"></a>
