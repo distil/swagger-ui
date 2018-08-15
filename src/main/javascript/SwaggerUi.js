@@ -147,12 +147,16 @@ window.SwaggerUi = Backbone.Router.extend({
       swaggerOptions: this.options,
       router: this
     }).render();
-    this.apiSearchView = new SwaggerUi.Views.ApiSearchView({
-      model: this.api,
-      el: $(this.api_search_id),
-      swaggerOptions: this.options,
-      router: this
-    }).render();
+
+    if (!this.options.hideApiSearch) {
+      this.apiSearchView = new SwaggerUi.Views.ApiSearchView({
+        model: this.api,
+        el: $(this.api_search_id),
+        swaggerOptions: this.options,
+        router: this
+      }).render();
+    }
+
     if (!_.isEmpty(this.api.securityDefinitions)){
       authsModel = _.map(this.api.securityDefinitions, function (auth, name) {
         var result = {};
