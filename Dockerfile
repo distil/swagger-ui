@@ -1,12 +1,15 @@
-FROM alpine:3.3
+FROM node
 
-MAINTAINER Roman Tarnavski
+RUN mkdir app
 
-RUN apk add --update nginx
+WORKDIR app
 
-COPY nginx.conf /etc/nginx/
-ADD ./dist/ /usr/share/nginx/html
+COPY . ./
+
+RUN npm install
+
+RUN npm run build
 
 EXPOSE 8080
 
-CMD nginx -g 'daemon off;'
+CMD npm run serve
